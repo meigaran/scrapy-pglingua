@@ -18,6 +18,7 @@ class PglinguaItem(scrapy.Item):
     subhead = scrapy.Field()
     date = scrapy.Field()
     body = scrapy.Field()
+    author = scrapy.Field()
 
     images = scrapy.Field()
     image_urls = scrapy.Field()

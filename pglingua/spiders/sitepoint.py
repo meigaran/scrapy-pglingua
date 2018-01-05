@@ -10,6 +10,7 @@ from scrapy.spiders import CrawlSpider, Rule
 
 TODOS:
  - apanhar o pé dos medias
+ - apanhar o autor
  - apanhar o resumo das entrevistas de agal-hoje
 
 Página principal:
@@ -53,8 +54,13 @@ class SitepointSpider(CrawlSpider):
     handle_httpstatus_list = [301, 302]
 
     allowed_domains = [ 'pglingua.org' ]
+    """
     start_urls = ( 'http://pglingua.org/noticias/entrevistas', \
                   'http://pglingua.org/agal/agal-hoje',
+                  )
+    """
+
+    start_urls = ( 'http://pglingua.org/noticias/entrevistas', \
                   )
 
     """
@@ -92,11 +98,13 @@ class SitepointSpider(CrawlSpider):
         item['title'] = response.xpath( '//title/text()' ).extract_first()
         item['head'] = response.xpath('//*[@id="page"]/h3/a/text()').extract_first()
         item['subhead'] = response.xpath('//*[@id="page"]/div[@class="subtitulo_artigo"]/span/p').extract_first()
-        item['date'] = response.xpath('//*[@id="page"]/p[1]/span').extract_first()
+        item['date'] = response.xpath('//*[@id="page"]/p[1]/span/text()').extract_first()
         #for i in range(len(response.xpath('//*[@id="page"]/span/*'))):
         #    item['body'] = item['body'] + response.xpath('//*[@id="page"]/span/p['+str(i)+']').extract_first()
-        item['body'] =  response.xpath('//*[@id="page"]/span').extract_first()
-
+        item['author'] = response.xpath('//*[@id="page"]/span/p[1]/strong/text()').extract_first()
+        #item['body'] =  response.xpath('//*[@id="page"]/span').extract_first() (<span> .... </span>, melhor quitamos todo)
+        item['body'] =  response.xpath('//*[@id="page"]/span/*').extract() # é um alista com todos os <p>, melhor assim por se tiramos partido de elo...
+        
         images = []
         for multimedia in response.xpath('//*[@id="page"]/div[@class="multimedia_artigo"]'):
             #image = dict()
