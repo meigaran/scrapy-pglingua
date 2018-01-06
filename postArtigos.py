@@ -2,6 +2,7 @@
 import json
 import sys
 import os
+import re
 
 """
 Publica os artigos de um .json (e a pasta assets com os mídia)
@@ -16,21 +17,40 @@ Publica os artigos de um .json (e a pasta assets com os mídia)
     2013-12-04 19:28:40
 """
 def adaptaDate(formatoOriginal):
-    print "Querem adaptar <%s>" % formatoOriginal
-    meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
-    mes=0
-    for i in range(len(meses)):
-        if str(formatoOriginal).find(meses[i]) > 0:
-            mes=i+1
-    if mes == 0:
-        print "Error! nom consego adaptar <%s>" % formatoOriginal
-        exit(3)
+    #print "Querem adaptar <%s>" % formatoOriginal
 
-    print "Mes: %i" % mes
+    # Cadeas para obtero numeral de mês
+    meses=['Janeiro','Fevereiro',u'Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
-    return "1-2-3-4-5-6"
+    # regex para obteros dados
+    #print re.match(r"\n\t\t(?P<feira>\S*), (?P<dia>[0-9]*) (?P<mes>\S*) (?P<ano>[0-9]*) (?P<hora>[0-9]*):(?P<minuto>[0-9]*)",formatoOriginal).groupdict()
+    formatado = re.match(r"\n\t\t(?P<feira>\S*), (?P<dia>[0-9]*) (?P<mes>\S*) (?P<ano>[0-9]*) (?P<hora>[0-9]*):(?P<minuto>[0-9]*)",formatoOriginal)
 
-# chama a
+    # obtemos o numeral do mes
+    if formatado.group('mes') in meses:
+        mes=meses.index(formatado.group('mes'))+1
+    else:
+        print "Error obtendo numeral de %s" % formatado.group('mes')
+        exit(1)
+
+    if formatado:
+        """
+        print "Feira: %s" % formatado.group('feira')
+        print "Mês: %s" % formatado.group('mes').encode('ascii','ignore')
+        print "Dia: %s" % formatado.group('dia')
+        print "Ano: %s" % formatado.group('ano')
+        print "Hora: %s" % formatado.group('hora')
+        print "Minuto: %s" % formatado.group('minuto')
+        """
+        formatoAdaptado= "%s-%02i-%s %s:%s:00" % (formatado.group('ano'),mes,formatado.group('dia'),formatado.group('hora'),formatado.group('minuto'))
+        #print "FormatoAdaptado <%s>" % formatoAdaptado
+        return formatoAdaptado
+    else:
+        print "Error no formatado"
+
+"""
+chama a wp-cli para publicar um item
+"""
 def publicaPost(item):
     # Campos necessários para o wp-cli
     # post_author
@@ -47,16 +67,18 @@ def publicaPost(item):
     items = ""
     # TODO: adaptar o formato da data "Sexta, 25 Outubro 2013 00:00" a "2013-12-04 19:28:40"
     items += " --post_date='"+adaptaDate(item['date'])+"'"
-    items += " --post_content='%s" % "".join(item['body'])
+    items += " --post_content='%s" % "".join(item['body'])+"'"
     items += " --post_title='"+item['title']+"'"
     # url como name: temos que editar (quitar) a raiz http://pglingua.org/agal/agal-hoje/5838-matias-g-rodrigues-licendiado-em-historia-da-arte-le-preciso-e-e
     items += " --post_name='"+item['url'][item['url'].rfind('/')+1:]+"'"
     items += " --post_modified='"+adaptaDate(item['date'])+"'"
-
-    print items
+    #print items
+    itemsEncoded = u''.join(items).encode('utf-8').strip()
+    #print itemsEncoded
 
     # Chamamos ao wp-cli
-    #os.system("php wp-cli.phar post create --post_type=post --post_status=publish --comment_status=open --ping_status=close" + items
+    php wp-cli.phar post create --post_type=post --post_status=publish --comment_status=open --ping_status=close --post_date="2013-12-04 19:28:40" --post_content="<p>meu primeiro post automatico</p>" --post_title="Este é o title do meu primeiro post automátcio" --post_name="o-meu-primeiro-post-automatico" --post_modified="2013-12-04 19:28:40"
+    os.system("php wp-cli.phar post create --post_type=post --post_status=publish --comment_status=open --ping_status=close" + itemsEncoded)
 
 # publica o json
 def publicaJson(jsonToPublish):
@@ -65,13 +87,11 @@ def publicaJson(jsonToPublish):
 
     jsonData = json.load(open(jsonToPublish))
     print "Temos %i artigos" % len(jsonData)
+
     # temos len(jsonData) artigos
     #for i in range(len(jsonData)):
-    #    print str(i)+": "+jsonData[i]['head']+"; date: "+jsonData[i]['date']
-
+    #    publicaPost(jsonData[i])
     publicaPost(jsonData[0])
-        #php wp-cli.phar
-
 
 
 if __name__ == "__main__":
