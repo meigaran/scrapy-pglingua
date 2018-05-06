@@ -32,9 +32,9 @@ O arquivo json resultante terá os seguintes campos:
  - images []
 
 #### Funcionamento
-Definir os campos a descarregar (estructura do json resultante) em [./spiders/items.py](../spiders/items.py)
+Definir os campos a descarregar (estructura do json resultante) em [./pglingua/items.py](../pglingua/spiders/items.py)
 
-Definir as urls nas que buscar, assim como as regras para cubrir a estructura do json no [./spiders/sitepoint.py](./spiders/sitepoint.py)
+Definir as urls nas que buscar, assim como as regras para cubrir a estructura do json no [./pglingua/spiders/sitepoint.py](./pglingua/spiders/sitepoint.py)
 
 #### TODO:
  - Só descarrega um par de secçoes, há que engadir mais url na lista start_urls
@@ -55,6 +55,10 @@ Uma vez rematado, subir os ficheiros ao servidor:
 
 E correr:
 python postArtigos.py pglingua.json
+
+#### TODO:
+ - Já funciona correctamente a creaçom dos artigos do .json
+ - Agora falta ver como ordear o .json, se em vários .json e o POST de eles etiquetem-se de diferente jeito
 
 Temos que ter instalado wp-cli https://github.com/wp-cli/wp-cli no Wordpress de destino
 
