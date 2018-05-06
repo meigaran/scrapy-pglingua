@@ -24,6 +24,6 @@ class PglinguaItem(scrapy.Item):
     image_urls = scrapy.Field()
 
     files = scrapy.Field()
-    file_urls = scrapy.Field()
+    #file_urls = scrapy.Field()
 
     pass
