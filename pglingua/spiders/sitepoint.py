@@ -104,7 +104,7 @@ class SitepointSpider(CrawlSpider):
         item['author'] = response.xpath('//*[@id="page"]/span/p[1]/strong/text()').extract_first()
         #item['body'] =  response.xpath('//*[@id="page"]/span').extract_first() (<span> .... </span>, melhor quitamos todo)
         item['body'] =  response.xpath('//*[@id="page"]/span/*').extract() # é um alista com todos os <p>, melhor assim por se tiramos partido de elo...
-        
+
         images = []
         for multimedia in response.xpath('//*[@id="page"]/div[@class="multimedia_artigo"]'):
             #image = dict()
@@ -112,6 +112,8 @@ class SitepointSpider(CrawlSpider):
             #image['foot'] = multimedia.xpath('p/text()').extract_first()
             src = multimedia.xpath('img/@src').extract_first()
             if src is not None:
+                # Falta meter os pés das fotos, temos que cambiar o tipo do images
+                #multimedia.xpath('p[@class="pe_multimedia_artigo"]').extract_first()
                 if src.find('http://') < 0:
                     image_src = self.root + src
                 else:
