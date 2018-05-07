@@ -38,7 +38,7 @@ Definir as urls nas que buscar, assim como as regras para cubrir a estructura do
 
 #### TODO:
  - Só descarrega um par de secçoes, há que engadir mais url na lista start_urls
- - apanhar os pés dos médias
+ - apanhar os pés dos médias -> já reconhemos alguns mas os que ficam abaixo de todo é necessário ver como saca-los
  - apanhar o resumo das entrevistas de agal-hoje
  - Dividir por secçoes (em diferentes .json de baixada) ou fazer este processado no script de subida ao wordpress a partir de um só .json?
 
